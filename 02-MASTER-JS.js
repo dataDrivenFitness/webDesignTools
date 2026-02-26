@@ -6,8 +6,12 @@
    Link via CDN or paste inline wrapped in <script> tags
    ================================================================
    GHL uses Nuxt.js which renders content dynamically.
-   Uses data-animate attribute instead of sp-reveal class
-   to prevent flash-of-hidden-content.
+
+   ANIMATION TRIGGER OPTIONS:
+   1. data-animate attribute (for Custom Code elements)
+   2. sp-animate class (for native GHL elements via Custom Class field)
+
+   Both work identically. Use whichever fits the element type.
    ================================================================ */
 
 (function() {
@@ -15,6 +19,7 @@
 
   function waitForGHL() {
     var hasContent = document.querySelector('[data-animate]') ||
+                     document.querySelector('.sp-animate') ||
                      document.querySelector('.sp-faq-question') ||
                      document.querySelector('.sp-stat-counter') ||
                      document.querySelector('[class*="sp-"]');
@@ -32,12 +37,12 @@
 
   /* ========================================
      SCROLL REVEAL ANIMATION
-     Uses [data-animate] attribute on elements.
+     Supports both [data-animate] and .sp-animate
      JS adds sp-reveal class + observes in same pass
      so there is no gap where content is hidden but unwatched.
      ======================================== */
   function initReveals() {
-    var items = document.querySelectorAll('[data-animate]');
+    var items = document.querySelectorAll('[data-animate], .sp-animate');
     if (items.length === 0) return;
 
     var observer = new IntersectionObserver(function(entries) {
