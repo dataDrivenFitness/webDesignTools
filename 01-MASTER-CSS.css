@@ -21,11 +21,12 @@
   --charcoal: #2A2A2A;
   --charcoal-light: #4A4A4A;
   --text-muted: #7A7570;
+  --orange: #E1641E;
+  --orange-dark: #C4541A;
+  --orange-light: #FDF0E8;
   --teal: #3D8B84;
   --teal-dark: #2D6B65;
   --teal-light: #E8F4F2;
-  --coral: #D4796A;
-  --coral-light: #F5E8E5;
   --white: #FFFFFF;
   --navy: #1A2332;
   --font-display: 'DM Serif Display', Georgia, serif;
@@ -146,7 +147,7 @@ a { text-decoration: none; }
    Apply to GHL Button elements via Custom Class
    ======================================== */
 .sp-btn-primary {
-  background: var(--teal) !important;
+  background: var(--orange) !important;
   color: var(--white) !important;
   border: none !important;
   border-radius: var(--radius-full) !important;
@@ -159,9 +160,9 @@ a { text-decoration: none; }
   cursor: pointer !important;
 }
 .sp-btn-primary:hover {
-  background: var(--teal-dark) !important;
+  background: var(--orange-dark) !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(61,139,132,0.3) !important;
+  box-shadow: 0 6px 20px rgba(225,100,30,0.3) !important;
 }
 
 .sp-btn-secondary {
@@ -181,8 +182,10 @@ a { text-decoration: none; }
   transform: translateY(-2px) !important;
 }
 
-.sp-btn-coral {
-  background: var(--coral) !important;
+/* Orange accent button (challenge pages, urgency CTAs) */
+.sp-btn-coral,
+.sp-btn-orange {
+  background: var(--orange) !important;
   color: var(--white) !important;
   border: none !important;
   border-radius: var(--radius-full) !important;
@@ -192,10 +195,11 @@ a { text-decoration: none; }
   font-weight: 600 !important;
   transition: all 0.3s !important;
 }
-.sp-btn-coral:hover {
-  background: #c06a5c !important;
+.sp-btn-coral:hover,
+.sp-btn-orange:hover {
+  background: var(--orange-dark) !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(212,121,106,0.3) !important;
+  box-shadow: 0 6px 20px rgba(225,100,30,0.3) !important;
 }
 
 .sp-btn-outline-light {
@@ -250,10 +254,12 @@ a { text-decoration: none; }
 }
 .sp-bg-teal * { color: var(--white); }
 
-.sp-bg-coral-gradient {
-  background: linear-gradient(135deg, var(--coral) 0%, #b85a4d 100%) !important;
+.sp-bg-coral-gradient,
+.sp-bg-orange-gradient {
+  background: linear-gradient(135deg, var(--orange) 0%, #B84D12 100%) !important;
 }
-.sp-bg-coral-gradient * { color: var(--white); }
+.sp-bg-coral-gradient *,
+.sp-bg-orange-gradient * { color: var(--white); }
 
 /* Radial glow overlay for hero/CTA sections */
 .sp-glow-teal {
