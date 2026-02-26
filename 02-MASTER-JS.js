@@ -3,25 +3,62 @@
    ================================================================
    WHERE TO PUT THIS:
    Page Settings > Custom Code > Footer
-   Wrap in <script> tags
+   Wrap in <script> tags OR link via CDN
+   ================================================================
+   NOTE: GHL uses Nuxt.js which renders content AFTER DOMContentLoaded.
+   All observers use a polling/retry pattern to wait for elements.
    ================================================================ */
 
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
+
+  /* ========================================
+     GHL-COMPATIBLE INIT
+     Polls until GHL finishes rendering content,
+     then initializes all features.
+     ======================================== */
+  function initAll() {
+    initScrollReveals();
+    initFaqAccordion();
+    initHeaderShadow();
+    initCounters();
+    initSmoothScroll();
+  }
+
+  // Try immediately, retry every 500ms until content exists (max 20 attempts)
+  var attempts = 0;
+  function waitForGHL() {
+    var hasContent = document.querySelector('.sp-reveal') ||
+                     document.querySelector('.sp-faq-question') ||
+                     document.querySelector('.sp-stat-counter') ||
+                     document.querySelector('[class*="sp-"]');
+    if (hasContent || attempts >= 20) {
+      initAll();
+      return;
+    }
+    attempts++;
+    setTimeout(waitForGHL, 500);
+  }
+
+  if (document.readyState === 'complete') {
+    waitForGHL();
+  } else {
+    window.addEventListener('load', waitForGHL);
+  }
+
 
   /* ========================================
      SCROLL REVEAL ANIMATION
      Automatically animates any element with class "sp-reveal"
      ======================================== */
   function initScrollReveals() {
-    const reveals = document.querySelectorAll('.sp-reveal');
+    var reveals = document.querySelectorAll('.sp-reveal');
     if (reveals.length === 0) return;
 
-    const observer = new IntersectionObserver(function(entries) {
+    var observer = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry, index) {
         if (entry.isIntersecting) {
-          // Stagger the animations slightly
           setTimeout(function() {
-            entry.target.classList.add('visible');
+            entry.target.classList.add('sp-visible');
           }, index * 80);
           observer.unobserve(entry.target);
         }
@@ -36,49 +73,51 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  initScrollReveals();
-
 
   /* ========================================
      FAQ ACCORDION
      Works with the FAQ HTML structure
      ======================================== */
-  document.querySelectorAll('.sp-faq-question').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var item = this.closest('.sp-faq-item');
-      // Close other open items (optional — remove this block for multi-open)
-      document.querySelectorAll('.sp-faq-item.open').forEach(function(openItem) {
-        if (openItem !== item) {
-          openItem.classList.remove('open');
-        }
+  function initFaqAccordion() {
+    document.querySelectorAll('.sp-faq-question').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = this.closest('.sp-faq-item');
+        document.querySelectorAll('.sp-faq-item.open').forEach(function(openItem) {
+          if (openItem !== item) {
+            openItem.classList.remove('open');
+          }
+        });
+        item.classList.toggle('open');
       });
-      // Toggle current item
-      item.classList.toggle('open');
     });
-  });
+  }
 
 
   /* ========================================
      HEADER SCROLL SHADOW
      Adds subtle shadow when user scrolls
      ======================================== */
-  var header = document.querySelector('.hl_header') || document.querySelector('.hl_navbar') || document.querySelector('[class*="header"]');
-  if (header) {
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 50) {
-        header.style.boxShadow = '0 2px 8px rgba(42,42,42,0.06)';
-      } else {
-        header.style.boxShadow = 'none';
-      }
-    });
+  function initHeaderShadow() {
+    var header = document.querySelector('.hl_header') ||
+                 document.querySelector('.hl_navbar') ||
+                 document.querySelector('[class*="header"]');
+    if (header) {
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 50) {
+          header.style.boxShadow = '0 2px 8px rgba(42,42,42,0.06)';
+        } else {
+          header.style.boxShadow = 'none';
+        }
+      });
+    }
   }
 
 
   /* ========================================
-     STAT COUNTER ANIMATION (optional)
+     STAT COUNTER ANIMATION
      Animates numbers on scroll into view
      ======================================== */
-  function animateCounters() {
+  function initCounters() {
     var counters = document.querySelectorAll('.sp-stat-counter');
     if (counters.length === 0) return;
 
@@ -90,13 +129,11 @@ document.addEventListener('DOMContentLoaded', function() {
           var suffix = el.getAttribute('data-suffix') || '';
           var prefix = el.getAttribute('data-prefix') || '';
           var duration = 2000;
-          var start = 0;
           var startTime = null;
 
           function step(timestamp) {
             if (!startTime) startTime = timestamp;
             var progress = Math.min((timestamp - startTime) / duration, 1);
-            // Ease out cubic
             var eased = 1 - Math.pow(1 - progress, 3);
             var current = Math.floor(eased * target);
             el.textContent = prefix + current.toLocaleString() + suffix;
@@ -117,22 +154,22 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  animateCounters();
-
 
   /* ========================================
      SMOOTH SCROLL FOR ANCHOR LINKS
      ======================================== */
-  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-    anchor.addEventListener('click', function(e) {
-      var targetId = this.getAttribute('href');
-      if (targetId === '#') return;
-      var target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+  function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+      anchor.addEventListener('click', function(e) {
+        var targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        var target = document.querySelector(targetId);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
     });
-  });
+  }
 
-});
+})();
