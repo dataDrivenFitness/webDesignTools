@@ -1,0 +1,1830 @@
+================================================================
+SetPointRx(TM) V2 -- GO HIGH LEVEL BUILD GUIDE
+================================================================
+
+TABLE OF CONTENTS
+-----------------
+1. INITIAL SETUP
+2. GHL PLATFORM NOTES & LIMITATIONS
+3. HEADER / NAVIGATION
+4. HOME PAGE SECTIONS (11 sections)
+5. OUR PROGRAM PAGE SECTIONS (3 sections)
+6. RESULTS PAGE SECTIONS (4 sections)
+7. GETTING STARTED PAGE SECTIONS (4 sections)
+8. LOCATIONS PAGE SECTIONS (3 sections)
+9. 6-WEEK CHALLENGE PAGE SECTIONS (4 sections)
+10. FOOTER (shared)
+11. MOBILE STICKY CTA (shared)
+12. CUSTOM CLASS CHEAT SHEET
+
+
+================================================================
+1. INITIAL SETUP
+================================================================
+
+STEP 1: Google Fonts
+--------------------
+Go to: Site Settings > Custom Code > Header Tracking Code
+Paste this BEFORE anything else:
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+
+STEP 2: Master CSS
+------------------
+OPTION A -- External Hosting (RECOMMENDED)
+  Upload 01-MASTER-CSS.css to a CDN, public GitHub repo, or any
+  publicly accessible URL. Then add this to SITE-WIDE Header
+  Tracking Code (not per-page):
+
+  <link rel="stylesheet" href="https://YOUR-CDN-URL/01-MASTER-CSS.css">
+
+  WHY: One update propagates to ALL pages instantly. No need to
+  paste CSS on every page individually.
+
+OPTION B -- Per-Page (Fallback)
+  Go to: Page Settings > Custom CSS
+  Paste the ENTIRE contents of: 01-MASTER-CSS.css
+  WARNING: You must repeat this on EVERY page. Any CSS change
+  requires updating all 6 pages individually.
+
+
+STEP 3: Master JavaScript
+-------------------------
+OPTION A -- External Hosting (RECOMMENDED)
+  Upload 02-MASTER-JS.js to same CDN/host. Add to SITE-WIDE
+  Footer Tracking Code:
+
+  <script src="https://YOUR-CDN-URL/02-MASTER-JS.js"></script>
+
+OPTION B -- Per-Page (Fallback)
+  Go to: Page Settings > Custom Code > Footer
+  Paste this:
+
+  <script>
+  [paste entire contents of 02-MASTER-JS.js here]
+  </script>
+
+
+STEP 4: Page-Level Settings
+----------------------------
+- Background Color: #F7F4EF (cream)
+- Content Width: 1200px
+- All page padding: 0
+
+
+================================================================
+2. GHL PLATFORM NOTES & LIMITATIONS
+================================================================
+
+READ THIS BEFORE BUILDING. These are verified GHL behaviors as
+of early 2026 that affect how this design system gets implemented.
+
+LIMITATION 1: CSS IS PAGE-LEVEL ONLY
+-------------------------------------
+GHL does not have a "global CSS" setting. Custom CSS in Page
+Settings applies only to that page. This is why external hosting
+(Step 2, Option A above) is strongly recommended -- it gives you
+site-wide CSS from a single file.
+
+LIMITATION 2: FORMS RENDER IN IFRAMES
+--------------------------------------
+GHL forms (booking forms, quiz/survey forms, etc.) render inside
+iframes. Page-level CSS CANNOT style form fields. To style forms:
+  -> Go to the Form Builder for each form
+  -> Open Styles -> Custom CSS panel
+  -> Apply form-specific styles THERE, not in the page CSS
+
+This means the sp-* classes in the master CSS will NOT affect
+form inputs, labels, or buttons inside GHL forms.
+
+IMPORTANT FOR V2: The Getting Started page quiz funnel is a GHL
+multi-step survey embedded in an iframe. Style it within the GHL
+Survey Builder, not the page CSS.
+
+LIMITATION 3: NO NATIVE SCROLL ANIMATIONS
+------------------------------------------
+GHL has no built-in animation system. The sp-animate class and
+IntersectionObserver JS in 02-MASTER-JS.js is the correct
+workaround. Every section that needs fade-in-on-scroll must
+either:
+  a) Have sp-animate as a Custom Class on a GHL element, OR
+  b) Be wrapped in a Custom Code element with sp-animate on it
+
+LIMITATION 4: CUSTOM CLASS FIELD IS INCONSISTENT
+-------------------------------------------------
+Not all GHL elements expose the "Custom Class" field. For complex
+sections (pillar cards, coach features, testimonial cards, trust
+bar, science diagram, timeline), use Custom Code elements instead
+of relying on native elements with custom classes.
+
+LIMITATION 5: NO STAGING ENVIRONMENT
+-------------------------------------
+Changes in GHL go live immediately. Before switching DNS to the
+new site:
+  -> Build on a subdomain (e.g., new.setpointrx.com)
+  -> Or use an unpublished page for testing
+  -> QA everything before pointing the live domain
+
+GHL NATIVE ELEMENTS -- WHEN TO USE THEM
+----------------------------------------
+USE native GHL elements for simple sections:
+  + Headings (apply sp-heading-xl, sp-heading-lg, etc.)
+  + Text blocks (apply sp-body-text, sp-body-large)
+  + Buttons (apply sp-btn-primary, sp-btn-secondary)
+  + Images (set border-radius in element settings)
+  + Google Maps embed (Locations page)
+  + Survey/quiz embed (Getting Started page)
+  + FAQ accordion (GHL has a native FAQ element -- simpler to
+    manage than the custom HTML version. Use native if you want
+    easy editing; use custom HTML if you need exact visual control)
+
+USE Custom Code elements for complex layouts:
+  x Trust bar with dividers
+  x Science section split layout + diagram
+  x Pillar cards grid (5 columns)
+  x Coach feature section with checkmark list
+  x Result/transformation card grid
+  x Testimonial card grid
+  x Timeline steps (Getting Started)
+  x Challenge hero with price + includes grid
+  x Stats counters
+
+ELEMENT TEMPLATES (NEW 2025 FEATURE)
+-------------------------------------
+GHL now lets you save sections as "Element Templates" -- reusable
+blocks you can drop into any page. Save these as templates:
+  -> Final CTA section (teal background, quiz CTA)
+  -> Trust Bar section
+  -> Footer section
+  -> Mobile Sticky CTA
+  -> Guarantee badge
+
+This ensures consistency across all 6 pages and lets you edit
+once to update everywhere.
+
+
+================================================================
+3. HEADER / NAVIGATION
+================================================================
+
+Use GHL's native Header/Navbar element.
+
+SETTINGS:
+- Logo: SetPointRx(TM) logo (or text: "SetPointRx(TM)")
+  Logo "Rx" portion should be teal (#3D8B84) and italic
+- Logo Font: DM Serif Display
+- Background: rgba(247,244,239,0.95)
+- Backdrop filter: blur(20px)
+- Position: Fixed/Sticky
+- Height: 76px
+- Nav Links:
+  - Home -> /
+  - Our Program -> /our-program
+  - Results -> /results
+  - Getting Started -> /getting-started
+  - Locations -> /locations
+  - $99 Challenge -> /6-week-challenge (color: #E1641E, weight: 700)
+- Nav Link Font: Manrope, 600 weight, 0.82rem
+- Right Side Elements:
+  - Phone icon + text: "888-FIT-2021" (linked to tel:8883482021)
+  - Button: "Take the Quiz" -> /getting-started
+  - Button Class: sp-btn-primary header-cta
+
+
+================================================================
+4. HOME PAGE -- SECTION BY SECTION
+================================================================
+
+Section order: Hero -> Trust Bar -> Who This Is For -> The Science
+-> How It Works -> 5 Pillars -> Results -> Your FitCoach ->
+Locations -> FAQ -> Final CTA
+
+
+--------------------------------------
+SECTION H1: HERO
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] -> 2 Columns (55% / 45%)
+  Background: #F7F4EF
+  Custom Class: sp-bg-cream
+  Min-Height: 90vh
+  Top Padding: 140px (accounts for fixed header)
+  Bottom Padding: 80px
+
+LEFT COLUMN:
+  [Text] Custom Class: sp-eyebrow
+    "THE SCIENCE OF LASTING WEIGHT LOSS"
+
+  [Headline] Custom Class: sp-heading-xl
+    Content (use HTML mode):
+
+    Your Body Has a Set Point. <em class="sp-italic-accent">We Reset It.</em>
+
+  [Text] Custom Class: sp-body-large
+    "Diets fail because they fight your biology. SetPointRx is a
+    supervised fitness and nutrition program designed to permanently
+    lower your body's natural weight -- guided by your personal
+    FitCoach, every single visit."
+
+  [Row] -> 2 Buttons side by side
+    [Button] Text: "Take Your Free Assessment ->"
+      Link: /getting-started
+      Custom Class: sp-btn-primary sp-btn-lg
+
+    [Button] Text: "See the Science"
+      Link: #science (anchor to science section)
+      Custom Class: sp-btn-secondary
+
+  [Text] Custom Class: sp-microcopy
+    "5 quick questions. No commitment. Get your personalized recommendation."
+
+RIGHT COLUMN:
+  [Image] Hero lifestyle photo
+    Border Radius: 20px
+    Aspect Ratio: 4/5
+    Alt: "SetPointRx member with FitCoach mid-session"
+
+  -- OR if no photo yet, use Custom Code: --
+
+  <div style="border-radius:20px;overflow:hidden;aspect-ratio:4/5;background:linear-gradient(135deg,#E8E0D4 0%,#EDE8E0 50%,#E8F4F2 100%);display:flex;align-items:center;justify-content:center;text-align:center;padding:1.5rem;position:relative;">
+    <div>
+      <div style="font-size:3rem;margin-bottom:0.5rem;">&#129309;</div>
+      <div style="font-size:0.9rem;color:#7A7570;">Hero photo:<br>Real member with their FitCoach<br>mid-session, smiling, warm lighting</div>
+    </div>
+    <div class="sp-floating-badge" style="position:absolute;bottom:1.5rem;left:1.5rem;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);padding:0.8rem 1.2rem;border-radius:12px;box-shadow:0 4px 20px rgba(42,42,42,0.08);">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:#3D8B84;line-height:1;">25K+</div>
+      <div style="font-size:0.7rem;color:#7A7570;font-weight:500;">Members Transformed</div>
+    </div>
+  </div>
+
+
+--------------------------------------
+SECTION H2: TRUST BAR
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #1A2332 | Custom Class: sp-bg-navy sp-trust-bar
+  Padding: 24px top/bottom
+
+  [Custom Code] Full-width:
+
+  <div class="sp-trust-bar" style="display:flex;justify-content:center;align-items:center;gap:3rem;flex-wrap:wrap;">
+    <div class="sp-trust-item" style="display:flex;align-items:center;gap:0.6rem;color:rgba(255,255,255,0.9);font-size:0.85rem;font-weight:600;">
+      <span class="sp-trust-num" style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:#fff;">25,000+</span>
+      <span class="sp-trust-label" style="font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.6);line-height:1.3;">Members<br>Helped</span>
+    </div>
+    <div class="sp-trust-divider" style="width:1px;height:32px;background:rgba(255,255,255,0.15);"></div>
+    <div class="sp-trust-item" style="display:flex;align-items:center;gap:0.6rem;color:rgba(255,255,255,0.9);font-size:0.85rem;font-weight:600;">
+      <span class="sp-trust-num" style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:#fff;">800K+</span>
+      <span class="sp-trust-label" style="font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.6);line-height:1.3;">Pounds<br>Lost</span>
+    </div>
+    <div class="sp-trust-divider" style="width:1px;height:32px;background:rgba(255,255,255,0.15);"></div>
+    <div class="sp-trust-item" style="display:flex;align-items:center;gap:0.6rem;color:rgba(255,255,255,0.9);font-size:0.85rem;font-weight:600;">
+      <span class="sp-trust-num" style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:#fff;">10+</span>
+      <span class="sp-trust-label" style="font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.6);line-height:1.3;">Years<br>Changing Lives</span>
+    </div>
+    <div class="sp-trust-divider" style="width:1px;height:32px;background:rgba(255,255,255,0.15);"></div>
+    <div class="sp-trust-item" style="display:flex;align-items:center;gap:0.6rem;color:rgba(255,255,255,0.9);font-size:0.85rem;font-weight:600;">
+      <span class="sp-trust-num" style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:#fff;">2</span>
+      <span class="sp-trust-label" style="font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.6);line-height:1.3;">South Shore<br>Locations</span>
+    </div>
+    <div class="sp-trust-divider" style="width:1px;height:32px;background:rgba(255,255,255,0.15);"></div>
+    <div class="sp-trust-item" style="display:flex;align-items:center;gap:0.6rem;color:rgba(255,255,255,0.9);font-size:0.85rem;font-weight:600;">
+      <span class="sp-trust-num" style="font-family:'DM Serif Display',serif;font-size:1.4rem;color:#fff;">&#10003;</span>
+      <span class="sp-trust-label" style="font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.6);line-height:1.3;">2-Week<br>Money-Back</span>
+    </div>
+  </div>
+
+  NOTE: On mobile (<768px), the trust-dividers should be hidden
+  and the items should wrap with reduced gap. The master CSS
+  handles this via .sp-trust-divider responsive rules.
+
+
+--------------------------------------
+SECTION H3: WHO THIS IS FOR
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "IS THIS YOU?"
+    [Headline] sp-heading-lg:
+      "We Built This for People Who've Tried Everything"
+    [Text] sp-body-text centered, max-width 620px:
+      "If traditional gyms worked, you wouldn't be reading this.
+      That's okay -- they weren't designed for you."
+
+  [Sub-Row] 4 Columns (equal) -- on mobile stacks 2-up then 1
+
+  Each column -- Custom Class: sp-who-card sp-animate
+
+  CARD 1 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:56px;height:56px;border-radius:50%;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;">&#128548;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Tired of diets that don't stick</h4>
+    <p style="font-size:0.85rem;color:#7A7570;line-height:1.6;">You've lost weight before -- then gained it all back. It's not your willpower. It's your biology.</p>
+  </div>
+
+  CARD 2 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:56px;height:56px;border-radius:50%;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;">&#128556;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Intimidated by regular gyms</h4>
+    <p style="font-size:0.85rem;color:#7A7570;line-height:1.6;">Walking into a room full of machines with no plan is overwhelming. You deserve guidance, not guesswork.</p>
+  </div>
+
+  CARD 3 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:56px;height:56px;border-radius:50%;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;">&#129335;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Want someone in your corner</h4>
+    <p style="font-size:0.85rem;color:#7A7570;line-height:1.6;">Not a trainer who shows you the ropes once. A coach who knows your name and is there every visit.</p>
+  </div>
+
+  CARD 4 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:56px;height:56px;border-radius:50%;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.5rem;">&#129657;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Managing a health condition</h4>
+    <p style="font-size:0.85rem;color:#7A7570;line-height:1.6;">Diabetes, high blood pressure, high cholesterol -- our program is built around improving the numbers that matter.</p>
+  </div>
+
+
+--------------------------------------
+SECTION H4: THE SCIENCE
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #FFFFFF | Custom Class: sp-bg-white
+  Padding: 100px top/bottom
+  Anchor ID: science
+
+  [Sub-Row] 2 Columns (50% / 50%) | Custom Class: sp-science-grid sp-animate
+  Align: center
+
+  LEFT COLUMN -- Science Visual:
+  [Custom Code] Custom Class: sp-science-visual
+
+  <div class="sp-science-visual" style="background:#1A2332;border-radius:20px;padding:5rem 3rem;text-align:center;color:#fff;position:relative;overflow:hidden;">
+    <div class="sp-science-diagram" style="position:relative;z-index:1;">
+      <div style="font-family:'DM Serif Display',serif;font-size:2.2rem;margin-bottom:1rem;">Set Point Theory</div>
+      <div style="font-size:0.82rem;color:rgba(255,255,255,0.6);max-width:280px;margin:0 auto;line-height:1.6;">Your body actively defends a biological weight range -- fighting diets with hunger, cravings, and a slower metabolism.</div>
+    </div>
+    <div class="sp-science-stat" style="display:flex;justify-content:center;gap:3rem;margin-top:3rem;position:relative;z-index:1;">
+      <div style="text-align:center;">
+        <span style="font-family:'DM Serif Display',serif;font-size:2rem;color:#E1641E;display:block;">80%</span>
+        <span style="font-size:0.72rem;color:rgba(255,255,255,0.5);font-weight:500;">of dieters regain<br>the weight</span>
+      </div>
+      <div style="text-align:center;">
+        <span style="font-family:'DM Serif Display',serif;font-size:2rem;color:#E1641E;display:block;">500</span>
+        <span style="font-size:0.72rem;color:rgba(255,255,255,0.5);font-weight:500;">extra calories burned<br>daily at rest</span>
+      </div>
+    </div>
+  </div>
+
+  RIGHT COLUMN -- Science Content:
+  [Text] Custom Class: sp-eyebrow
+    "WHY DIETS FAIL"
+
+  [Headline] Custom Class: sp-heading-lg
+    "It's Not Willpower. It's Biology."
+
+  [Text] Custom Class: sp-body-text
+    "Your body has a 'set point' -- a weight it fights to maintain
+    through hormones, appetite, and metabolism. When you diet, your
+    body thinks you're starving and pushes you back."
+
+  [Text] Custom Class: sp-body-text
+    "That's why 80% of people who lose weight gain it all back.
+    They were fighting biology with willpower alone."
+
+  [Text] Custom Class: sp-body-text
+    Content (use HTML mode):
+    <strong>SetPointRx is different.</strong> Our 5-pillar program
+    -- strength training, cardio, nutrition, flexibility, and
+    accountability -- works together to gradually lower your body's
+    set point. Not a crash diet. A permanent metabolic reset.
+
+  [Button] "Learn About the Program ->"
+    Link: /our-program
+    Custom Class: sp-btn-teal
+
+  [Text] Custom Class: sp-microcopy
+    style: italic, border-top: 1px solid #E8E0D4, padding-top: 1rem
+    "Set point theory is supported by research from the Cleveland
+    Clinic, Cedars-Sinai, UAB, and published in the National
+    Library of Medicine."
+
+
+--------------------------------------
+SECTION H5: HOW IT WORKS
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "SIMPLE AS 1-2-3"
+    [Headline] sp-heading-lg: "How It Works"
+    [Text] sp-body-text centered, max-width 620px:
+      "No guesswork. No commitment required to get started. Just
+      a clear path to real results."
+
+  [Sub-Row] 3 Columns (equal) | Custom Class: sp-steps-grid
+  NOTE: The master CSS adds a connecting line between the step
+  circles via .sp-steps-grid::before
+
+  STEP 1 [Custom Code] Custom Class: sp-step-card sp-animate:
+  <div style="text-align:center;position:relative;z-index:1;">
+    <div class="sp-step-num" style="width:72px;height:72px;border-radius:50%;background:#3D8B84;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.6rem;margin:0 auto 1.5rem;box-shadow:0 4px 16px rgba(61,139,132,0.3);">1</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Free Evaluation</h4>
+    <p style="color:#7A7570;font-size:0.88rem;max-width:300px;margin:0 auto;">Meet your FitCoach. We measure your body composition, health markers, and goals. No cost, no pressure.</p>
+  </div>
+
+  STEP 2 [Custom Code] Custom Class: sp-step-card sp-animate:
+  <div style="text-align:center;position:relative;z-index:1;">
+    <div class="sp-step-num" style="width:72px;height:72px;border-radius:50%;background:#3D8B84;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.6rem;margin:0 auto 1.5rem;box-shadow:0 4px 16px rgba(61,139,132,0.3);">2</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Your Custom Plan</h4>
+    <p style="color:#7A7570;font-size:0.88rem;max-width:300px;margin:0 auto;">Your FitCoach builds a program across all 5 pillars -- tailored to your body, your health, and your life.</p>
+  </div>
+
+  STEP 3 [Custom Code] Custom Class: sp-step-card sp-animate:
+  <div style="text-align:center;position:relative;z-index:1;">
+    <div class="sp-step-num" style="width:72px;height:72px;border-radius:50%;background:#3D8B84;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.6rem;margin:0 auto 1.5rem;box-shadow:0 4px 16px rgba(61,139,132,0.3);">3</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Transform Together</h4>
+    <p style="color:#7A7570;font-size:0.88rem;max-width:300px;margin:0 auto;">3 visits per week, every one supervised. Weekly weigh-ins, monthly re-evaluations, and real-time adjustments.</p>
+  </div>
+
+  GUARANTEE BADGE (below steps):
+  [Custom Code] Custom Class: sp-guarantee sp-animate
+
+  <div class="sp-guarantee" style="display:flex;align-items:center;gap:1.5rem;background:#fff;border:2px solid #E8F4F2;border-radius:12px;padding:1.5rem;max-width:560px;margin:3rem auto 0;">
+    <div style="font-size:2.5rem;flex-shrink:0;">&#128737;&#65039;</div>
+    <div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.92rem;margin-bottom:0.2rem;">2-Week Unconditional Money-Back Guarantee</h4>
+      <p style="font-size:0.82rem;color:#7A7570;">Try the program for two full weeks. If it's not for you, you get every penny back. No questions.</p>
+    </div>
+  </div>
+
+
+--------------------------------------
+SECTION H6: 5 PILLARS
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #FFFFFF | Custom Class: sp-bg-white
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "THE SETPOINTRX(TM) PROGRAM"
+    [Headline] sp-heading-lg: "5 Pillars. One Complete Plan."
+    [Text] sp-body-text centered, max-width 620px:
+      "Most programs address one or two of these. We address all
+      five -- because that's what it takes to reset your set point."
+
+  [Sub-Row] 5 Columns (equal) -- on mobile stacks 2-up then 1
+  Custom Class: sp-pillars-grid
+
+  Each column -- Custom Class: sp-pillar-card sp-animate
+
+  PILLAR 1 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:52px;height:52px;border-radius:8px;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.4rem;">&#127947;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Strength Training</h4>
+    <p style="font-size:0.8rem;color:#7A7570;line-height:1.5;">Build lean muscle to boost your resting metabolism. Every session supervised by your FitCoach.</p>
+  </div>
+
+  PILLAR 2 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:52px;height:52px;border-radius:8px;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.4rem;">&#10084;&#65039;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Cardio Fitness</h4>
+    <p style="font-size:0.8rem;color:#7A7570;line-height:1.5;">Heart-rate targeted intervals designed for fat burning and cardiovascular health.</p>
+  </div>
+
+  PILLAR 3 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:52px;height:52px;border-radius:8px;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.4rem;">&#129367;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Nutrition</h4>
+    <p style="font-size:0.8rem;color:#7A7570;line-height:1.5;">Personalized meal plans. High protein, moderate fat, smart carbs. No starvation. Real food.</p>
+  </div>
+
+  PILLAR 4 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:52px;height:52px;border-radius:8px;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.4rem;">&#129496;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Flexibility</h4>
+    <p style="font-size:0.8rem;color:#7A7570;line-height:1.5;">Injury prevention, mobility work, and functional movement to keep you active for life.</p>
+  </div>
+
+  PILLAR 5 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;text-align:center;border:1px solid #E8E0D4;">
+    <div style="width:52px;height:52px;border-radius:8px;background:#E8F4F2;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.4rem;">&#129309;</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Accountability</h4>
+    <p style="font-size:0.8rem;color:#7A7570;line-height:1.5;">Weekly weigh-ins, food journals, monthly reviews. Your FitCoach keeps you honest -- and motivated.</p>
+  </div>
+
+
+--------------------------------------
+SECTION H7: RESULTS
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "REAL PEOPLE. REAL RESULTS."
+    [Headline] sp-heading-lg:
+      "Transformations That Speak for Themselves"
+    [Text] sp-body-text centered:
+      "These aren't fitness models. These are people just like you
+      who found the program that finally worked."
+
+  [Sub-Row] 3 Columns (equal) | Custom Class: sp-results-grid
+
+  Each column -- Custom Class: sp-result-card sp-animate
+
+  RESULT 1 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-47 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Sarah M., Weymouth</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"For the first time in my life, I didn't gain it back. It's been two years and I'm still at my goal weight."</p>
+    </div>
+  </div>
+
+  RESULT 2 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-62 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Mark D., Pembroke</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"My doctor took me off blood pressure medication after 4 months. SetPointRx literally saved my life."</p>
+    </div>
+  </div>
+
+  RESULT 3 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-35 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Linda K., Weymouth</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"I was terrified to walk into a gym. My FitCoach made me feel like I belonged from day one."</p>
+    </div>
+  </div>
+
+  [Button] Centered below grid
+    Text: "See More Transformations ->"
+    Link: /results
+    Custom Class: sp-btn-secondary
+    Margin-top: 3rem
+
+
+--------------------------------------
+SECTION H8: YOUR FITCOACH
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #FFFFFF | Custom Class: sp-bg-white
+  Padding: 100px top/bottom
+
+  [Sub-Row] 2 Columns (50% / 50%) | Custom Class: sp-coach-grid sp-animate
+  Align: center
+
+  LEFT COLUMN -- Coach Image:
+  [Image] Coach photo (border-radius: 20px, aspect-ratio 4/3)
+  -- OR placeholder --
+
+  <div style="border-radius:20px;overflow:hidden;aspect-ratio:4/3;background:linear-gradient(135deg,#E8F4F2,#E8E0D4);display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:#7A7570;text-align:center;padding:1.5rem;">
+    <div>
+      <div style="font-size:3rem;margin-bottom:0.5rem;">&#128170;</div>
+      Photo: FitCoach guiding a member<br>through an exercise, encouraging
+    </div>
+  </div>
+
+  RIGHT COLUMN -- Coach Content:
+  [Text] sp-eyebrow: "NOT A GYM. A GUIDED EXPERIENCE."
+
+  [Headline] sp-heading-lg
+    Content (use HTML mode):
+    Your FitCoach Is There. <em class="sp-italic-accent">Every. Single. Visit.</em>
+
+  [Text] sp-body-text:
+    "This is what makes SetPointRx fundamentally different. You
+    don't get a plan and figure it out alone. Your FitCoach is with
+    you at every session -- correcting form, pushing you when you
+    need it, adjusting your program as your body changes."
+
+  [Custom Code] -- Coach features checklist:
+  Custom Class: sp-coach-features
+
+  <ul style="list-style:none;margin:1.5rem 0;">
+    <li style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.5rem 0;font-size:0.9rem;color:#4A4A4A;">
+      <span style="color:#3D8B84;font-weight:700;flex-shrink:0;margin-top:2px;">&#10003;</span>
+      Certified, experienced fitness professionals
+    </li>
+    <li style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.5rem 0;font-size:0.9rem;color:#4A4A4A;">
+      <span style="color:#3D8B84;font-weight:700;flex-shrink:0;margin-top:2px;">&#10003;</span>
+      Present at every one of your 3 weekly visits
+    </li>
+    <li style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.5rem 0;font-size:0.9rem;color:#4A4A4A;">
+      <span style="color:#3D8B84;font-weight:700;flex-shrink:0;margin-top:2px;">&#10003;</span>
+      Weekly nutrition check-ins and weigh-ins
+    </li>
+    <li style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.5rem 0;font-size:0.9rem;color:#4A4A4A;">
+      <span style="color:#3D8B84;font-weight:700;flex-shrink:0;margin-top:2px;">&#10003;</span>
+      Monthly progress evaluations with plan adjustments
+    </li>
+    <li style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.5rem 0;font-size:0.9rem;color:#4A4A4A;">
+      <span style="color:#3D8B84;font-weight:700;flex-shrink:0;margin-top:2px;">&#10003;</span>
+      Someone who actually knows your name
+    </li>
+  </ul>
+
+  [Button] "Take Your Free Assessment ->"
+    Link: /getting-started
+    Custom Class: sp-btn-primary
+
+
+--------------------------------------
+SECTION H9: LOCATIONS
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "2 SOUTH SHORE LOCATIONS"
+    [Headline] sp-heading-lg: "Find Your SetPointRx"
+    [Text] sp-body-text centered:
+      "Convenient locations on the South Shore of Massachusetts."
+
+  [Sub-Row] 2 Columns (equal) | Custom Class: sp-locations-grid
+
+  Each column -- Custom Class: sp-location-card sp-animate
+
+  WEYMOUTH [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;border:1px solid #E8E0D4;display:flex;gap:1.5rem;align-items:center;">
+    <div style="width:52px;height:52px;border-radius:50%;background:#E8F4F2;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.4rem;">&#128205;</div>
+    <div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.15rem;">Weymouth</h4>
+      <p style="font-size:0.82rem;color:#7A7570;line-height:1.5;">122 Main Street, Weymouth MA</p>
+      <a href="tel:3392017906" style="color:#3D8B84;font-weight:600;font-size:0.85rem;text-decoration:none;">339-201-7906</a>
+    </div>
+  </div>
+
+  PEMBROKE [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:1.5rem;border:1px solid #E8E0D4;display:flex;gap:1.5rem;align-items:center;">
+    <div style="width:52px;height:52px;border-radius:50%;background:#E8F4F2;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.4rem;">&#128205;</div>
+    <div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.15rem;">Pembroke</h4>
+      <p style="font-size:0.82rem;color:#7A7570;line-height:1.5;">125 Church Street, Pembroke MA</p>
+      <a href="tel:7819241872" style="color:#3D8B84;font-weight:600;font-size:0.85rem;text-decoration:none;">781-924-1872</a>
+    </div>
+  </div>
+
+
+--------------------------------------
+SECTION H10: FAQ
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #FFFFFF | Custom Class: sp-bg-white
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "COMMON QUESTIONS"
+    [Headline] sp-heading-lg: "Everything You Want to Know"
+
+  OPTION A: GHL Native FAQ Element (easier to edit)
+  Set Custom Class: sp-faq-item on each item for styling.
+  Add these 6 questions:
+
+  OPTION B: Custom Code (exact visual control)
+  [Custom Code] max-width 720px, margin: 0 auto
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      What if I'm really out of shape?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">You're exactly who we built this for. Most of our members hadn't exercised in years when they started. Your FitCoach meets you where you are and builds from there. No judgment -- just a plan that works for your body today.</p>
+    </div>
+  </div>
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      How is this different from a regular gym?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">At a gym, you get a membership and figure it out alone. At SetPointRx, you get a certified FitCoach at every single visit, a personalized nutrition plan, weekly weigh-ins, and monthly evaluations. It's a complete supervised program -- not a room full of equipment.</p>
+    </div>
+  </div>
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      How much does it cost?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">Pricing depends on your goals and program length. We recommend starting with a free evaluation so your FitCoach can recommend the right plan. We also offer a $99 6-Week Challenge to try the program at a reduced rate. There's a 2-week money-back guarantee on all programs.</p>
+    </div>
+  </div>
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      Do I need to follow a strict diet?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">No crash diets. No deprivation. Your nutrition plan is built around real food -- high protein, moderate fat, and smart carbs. Your FitCoach works with you to find an approach that fits your life, not the other way around.</p>
+    </div>
+  </div>
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      What if I have a medical condition?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">Many of our members have diabetes, high blood pressure, or high cholesterol when they start. Our program is designed to improve these conditions through exercise and nutrition. We coordinate with your physician and your initial evaluation includes health screenings.</p>
+    </div>
+  </div>
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      What's the time commitment?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">Three visits per week, about 45-60 minutes each. That's it. Your FitCoach handles the planning -- you just show up. Most members train Monday/Wednesday/Friday or Tuesday/Thursday/Saturday.</p>
+    </div>
+  </div>
+
+  NOTE: The FAQ toggle requires JS from 02-MASTER-JS.js. The JS
+  toggles an "open" class on .sp-faq-item which sets max-height
+  on .sp-faq-answer and rotates the +/- icon.
+
+
+--------------------------------------
+SECTION H11: FINAL CTA
+--------------------------------------
+
+IMPORTANT V2 CHANGE: The final CTA uses a TEAL background
+(#3D8B84), NOT navy. The CTA drives to the quiz, not to
+a booking calendar.
+
+GHL STRUCTURE:
+[Row] Background: #3D8B84 | Custom Class: sp-bg-teal sp-final-cta
+  Padding: 120px top/bottom | Centered text
+
+  [Text] sp-eyebrow style="color:rgba(255,255,255,0.5)"
+    "READY TO START?"
+
+  [Headline] sp-heading-lg style="color:#fff"
+    Content (use HTML mode):
+    Your Set Point Can Change.<br>Let's Prove It.
+
+  [Text] sp-body-text centered, max-width 480px
+    style="color:rgba(255,255,255,0.8)"
+    "Take our 5-question assessment and get a personalized
+    recommendation -- free, no commitment."
+
+  [Button] "Take Your Free Assessment ->"
+    Link: /getting-started
+    Custom Class: sp-btn-white sp-btn-lg
+
+  [Text] Custom Class: sp-microcopy
+    style="color:rgba(255,255,255,0.6)"
+    "Or call 888-FIT-2021 to speak with a FitCoach today."
+
+
+================================================================
+5. OUR PROGRAM PAGE
+================================================================
+
+Section order: Dark Hero -> Pillar Details (5 sections) -> Final CTA
+
+
+--------------------------------------
+SECTION P1: PROGRAM HERO (DARK)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #1A2332 | Custom Class: sp-bg-navy
+  Padding: 160px top (header + spacing), 80px bottom
+  Centered text
+
+  [Text] sp-eyebrow style="color:rgba(255,255,255,0.5)"
+    "THE SETPOINTRX(TM) PROGRAM"
+
+  [Headline] sp-heading-xl style="color:#fff"
+    Content (use HTML mode):
+    5 Pillars Working Together to <em class="sp-italic-accent">Reset Your Set Point</em>
+
+  [Text] sp-body-text centered, max-width 600px
+    style="color:rgba(255,255,255,0.6)"
+    "Most fitness programs address one thing. Ours addresses
+    everything -- because lasting weight loss requires a
+    complete approach."
+
+
+--------------------------------------
+SECTION P2: PILLAR DETAIL SECTIONS
+--------------------------------------
+
+5 pillar detail sections with alternating layout (image/content
+sides flip on even-numbered sections).
+
+GHL STRUCTURE:
+[Row] Padding: 48px top/bottom | Border-bottom: 1px solid #E8E0D4
+
+  [Sub-Row] 2 Columns (50/50) | Custom Class: sp-animate
+  Odd sections (1, 3, 5): image LEFT, content RIGHT
+  Even sections (2, 4): image RIGHT, content LEFT
+  (In GHL, simply swap the column order for even sections)
+
+  IMAGE COLUMN:
+  [Image] or placeholder with border-radius: 12px, aspect-ratio 4/3
+
+  CONTENT COLUMN:
+  [Text] sp-eyebrow + [Headline] sp-heading-md + [Text] sp-body-text
+
+-- PILLAR 1: Strength Training --
+  IMAGE: Placeholder icon &#127947; or real photo
+  Eyebrow: "PILLAR 1"
+  Heading: "Strength Training"
+  Body: "Muscle is metabolically active tissue -- the more you
+  have, the more calories you burn at rest. Our supervised
+  strength training builds lean muscle safely, increasing your
+  resting metabolism by up to 500 extra calories per day."
+  Body 2: "Every session is guided by your FitCoach. Proper form,
+  progressive overload, and a program that evolves as you get
+  stronger."
+
+-- PILLAR 2: Cardiorespiratory Fitness (image RIGHT) --
+  IMAGE: Placeholder icon &#10084;&#65039; or real photo
+  Eyebrow: "PILLAR 2"
+  Heading: "Cardiorespiratory Fitness"
+  Body: "Heart-rate targeted interval training designed for
+  maximum fat burning and cardiovascular health. Not mindless
+  treadmill time -- strategic, effective, and tailored to your
+  current fitness level."
+  Body 2: "As your fitness improves, your FitCoach adjusts the
+  intensity to keep your body challenged and your progress steady."
+
+-- PILLAR 3: Weight Loss & Nutrition --
+  IMAGE: Placeholder icon &#129367; or real photo
+  Eyebrow: "PILLAR 3"
+  Heading: "Weight Loss & Nutrition"
+  Body: "Personalized meal plans built around real food: high
+  protein, moderate fat, and smart carbohydrates. No deprivation,
+  no supplements required -- just an eating strategy you can
+  maintain for life."
+  Body 2: "Weekly nutrition check-ins with your FitCoach keep you
+  on track and allow for real-time adjustments as your body
+  changes."
+
+-- PILLAR 4: Flexibility & Mobility (image RIGHT) --
+  IMAGE: Placeholder icon &#129496; or real photo
+  Eyebrow: "PILLAR 4"
+  Heading: "Flexibility & Mobility"
+  Body: "Injury prevention, range of motion work, and functional
+  movement patterns that keep you active and pain-free. This is
+  the pillar most programs ignore -- and the one that keeps you
+  in the game long-term."
+
+-- PILLAR 5: Accountability --
+  IMAGE: Placeholder icon &#129309; or real photo
+  Eyebrow: "PILLAR 5"
+  Heading: "Accountability"
+  Body: "The glue that holds it all together. Weekly weigh-ins,
+  food journals, monthly re-evaluations, and a FitCoach who is
+  present at every single visit. This isn't a membership -- it's
+  a relationship built on real progress."
+  Body 2: "When life gets in the way, your FitCoach adjusts. When
+  you hit a plateau, your FitCoach pivots. You're never alone
+  in this."
+
+
+--------------------------------------
+SECTION P3: FINAL CTA
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #3D8B84 | Custom Class: sp-bg-teal sp-final-cta
+  Padding: 120px top/bottom | Centered text
+
+  [Headline] sp-heading-lg style="color:#fff"
+    "See If SetPointRx Is Right for You"
+
+  [Text] sp-body-text centered, max-width 480px
+    style="color:rgba(255,255,255,0.8)"
+    "Take our 5-question assessment and get a personalized
+    program recommendation -- free, no commitment."
+
+  [Button] "Take Your Free Assessment ->"
+    Link: /getting-started
+    Custom Class: sp-btn-white sp-btn-lg
+
+  [Text] Custom Class: sp-microcopy
+    style="color:rgba(255,255,255,0.5)"
+    "Or call 888-FIT-2021 to speak with a FitCoach directly."
+
+
+================================================================
+6. RESULTS PAGE
+================================================================
+
+Section order: Dark Hero -> Transformations Grid -> Testimonial
+Quotes -> Final CTA
+
+
+--------------------------------------
+SECTION R1: RESULTS HERO (DARK)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #1A2332 | Custom Class: sp-bg-navy
+  Padding: 160px top, 80px bottom | Centered text
+
+  [Text] sp-eyebrow style="color:rgba(255,255,255,0.5)"
+    "REAL PEOPLE. REAL RESULTS."
+
+  [Headline] sp-heading-xl style="color:#fff"
+    Content (use HTML mode):
+    25,000+ Members. <em class="sp-italic-accent">800,000+ Pounds Lost.</em>
+
+  [Text] sp-body-text centered, max-width 600px
+    style="color:rgba(255,255,255,0.6)"
+    "These aren't fitness models. These are your neighbors --
+    people from the South Shore who found the program that
+    finally worked."
+
+
+--------------------------------------
+SECTION R2: TRANSFORMATION CARDS (6 cards, 3x2 grid)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF | Padding: 100px top/bottom
+
+  [Sub-Row] 3 Columns (equal) -- Row 1
+  [Sub-Row] 3 Columns (equal) -- Row 2
+
+  Custom Class per column: sp-result-card sp-animate
+
+  Each card [Custom Code]:
+
+  CARD 1:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-47 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Sarah M., Weymouth</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"For the first time in my life, I didn't gain it back. It's been two years and I'm still at my goal weight."</p>
+    </div>
+  </div>
+
+  CARD 2:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-62 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Mark D., Weymouth</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"My doctor took me off blood pressure medication after 4 months. SetPointRx literally saved my life."</p>
+    </div>
+  </div>
+
+  CARD 3:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-35 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Linda K., Pembroke</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"I was terrified to walk into a gym. My FitCoach made me feel like I belonged from day one."</p>
+    </div>
+  </div>
+
+  CARD 4:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-53 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Tom R., Pembroke</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"I'm 58 years old and in the best shape of my life. My A1C went from 7.2 to 5.8. My doctor couldn't believe it."</p>
+    </div>
+  </div>
+
+  CARD 5:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-41 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">Diane C., Weymouth</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"I'd tried Weight Watchers, Noom, keto, you name it. This is the only program where someone was actually there to keep me going."</p>
+    </div>
+  </div>
+
+  CARD 6:
+  <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E0D4;">
+    <div style="aspect-ratio:3/2;background:linear-gradient(135deg,#E8E0D4,#EDE8E0);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:#7A7570;text-align:center;padding:1rem;">Before / After photo</div>
+    <div style="padding:1.5rem;">
+      <div style="font-family:'DM Serif Display',serif;font-size:1.8rem;color:#3D8B84;line-height:1;margin-bottom:0.25rem;">-29 lbs</div>
+      <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;">James F., Weymouth</div>
+      <p style="font-size:0.82rem;color:#7A7570;font-style:italic;line-height:1.6;">"I hate gyms. But this doesn't feel like a gym. It feels like having a personal coach who actually cares."</p>
+    </div>
+  </div>
+
+  NOTE: All locations are Weymouth or Pembroke only. No Holbrook
+  or Plymouth references.
+
+
+--------------------------------------
+SECTION R3: TESTIMONIAL QUOTES (2x2 grid)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #FFFFFF | Custom Class: sp-bg-white
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "IN THEIR OWN WORDS"
+    [Headline] sp-heading-lg: "What Our Members Say"
+
+  [Sub-Row] 2 Columns -- Row 1
+  [Sub-Row] 2 Columns -- Row 2
+
+  Each column -- Custom Class: sp-testimonial-card sp-animate
+
+  TESTIMONIAL 1 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:3rem;border:1px solid #E8E0D4;position:relative;">
+    <div style="font-family:'DM Serif Display',serif;font-size:4rem;color:#E8F4F2;position:absolute;top:0.5rem;left:1.2rem;line-height:1;">&#8220;</div>
+    <p style="font-size:0.92rem;color:#4A4A4A;font-style:italic;line-height:1.7;margin-bottom:1rem;position:relative;z-index:1;">The coaches here genuinely care about your progress. It's not just reps and sets -- they ask about your meals, your sleep, your stress. It's a whole-person approach.</p>
+    <div style="font-weight:700;font-size:0.85rem;color:#2A2A2A;">Patricia W.</div>
+    <div style="font-size:0.78rem;color:#3D8B84;font-weight:600;">Member since 2021 &middot; Pembroke</div>
+  </div>
+
+  TESTIMONIAL 2 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:3rem;border:1px solid #E8E0D4;position:relative;">
+    <div style="font-family:'DM Serif Display',serif;font-size:4rem;color:#E8F4F2;position:absolute;top:0.5rem;left:1.2rem;line-height:1;">&#8220;</div>
+    <p style="font-size:0.92rem;color:#4A4A4A;font-style:italic;line-height:1.7;margin-bottom:1rem;position:relative;z-index:1;">I was paying $50/month for a gym I never used. Here, I actually look forward to going because someone's waiting for me with a plan.</p>
+    <div style="font-weight:700;font-size:0.85rem;color:#2A2A2A;">Robert H.</div>
+    <div style="font-size:0.78rem;color:#3D8B84;font-weight:600;">Lost 38 lbs &middot; Weymouth</div>
+  </div>
+
+  TESTIMONIAL 3 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:3rem;border:1px solid #E8E0D4;position:relative;">
+    <div style="font-family:'DM Serif Display',serif;font-size:4rem;color:#E8F4F2;position:absolute;top:0.5rem;left:1.2rem;line-height:1;">&#8220;</div>
+    <p style="font-size:0.92rem;color:#4A4A4A;font-style:italic;line-height:1.7;margin-bottom:1rem;position:relative;z-index:1;">My husband and I joined together. Between us, we've lost over 90 pounds. Best decision we ever made.</p>
+    <div style="font-weight:700;font-size:0.85rem;color:#2A2A2A;">Carol & Steve T.</div>
+    <div style="font-size:0.78rem;color:#3D8B84;font-weight:600;">Members since 2022 &middot; Weymouth</div>
+  </div>
+
+  TESTIMONIAL 4 [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:3rem;border:1px solid #E8E0D4;position:relative;">
+    <div style="font-family:'DM Serif Display',serif;font-size:4rem;color:#E8F4F2;position:absolute;top:0.5rem;left:1.2rem;line-height:1;">&#8220;</div>
+    <p style="font-size:0.92rem;color:#4A4A4A;font-style:italic;line-height:1.7;margin-bottom:1rem;position:relative;z-index:1;">After my knee surgery, I was afraid to exercise. The flexibility work they do here got me moving again safely. I'm stronger now than before my surgery.</p>
+    <div style="font-weight:700;font-size:0.85rem;color:#2A2A2A;">Nancy L.</div>
+    <div style="font-size:0.78rem;color:#3D8B84;font-weight:600;">Member since 2023 &middot; Pembroke</div>
+  </div>
+
+  NOTE: All testimonial locations are Weymouth or Pembroke only.
+
+
+--------------------------------------
+SECTION R4: FINAL CTA
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #3D8B84 | Custom Class: sp-bg-teal sp-final-cta
+  Padding: 120px top/bottom | Centered text
+
+  [Headline] sp-heading-lg style="color:#fff"
+    "Your Transformation Starts with 5 Questions"
+
+  [Text] sp-body-text centered
+    style="color:rgba(255,255,255,0.8)"
+    "Take our free assessment and see what's possible."
+
+  [Button] "Take Your Free Assessment ->"
+    Link: /getting-started
+    Custom Class: sp-btn-white sp-btn-lg
+
+
+================================================================
+7. GETTING STARTED PAGE (MAJOR CHANGE -- QUIZ FUNNEL FIRST)
+================================================================
+
+V2 CHANGE: This page is now quiz-first instead of timeline-first.
+The primary conversion action is a 5-question GHL survey, not a
+calendar booking.
+
+Section order: Dark Hero -> Quiz Funnel -> What Happens Next
+(timeline) -> Prefer to Talk? (Final CTA)
+
+
+--------------------------------------
+SECTION G1: GETTING STARTED HERO (DARK)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #1A2332 | Custom Class: sp-bg-navy
+  Padding: 160px top, 80px bottom | Centered text
+
+  [Text] sp-eyebrow style="color:rgba(255,255,255,0.5)"
+    "GETTING STARTED"
+
+  [Headline] sp-heading-xl style="color:#fff"
+    Content (use HTML mode):
+    Start With <em class="sp-italic-accent">5 Simple Questions</em>
+
+  [Text] sp-body-text centered, max-width 600px
+    style="color:rgba(255,255,255,0.6)"
+    "No phone call required. Take our free assessment and get a
+    personalized recommendation in under 2 minutes."
+
+
+--------------------------------------
+SECTION G2: QUIZ FUNNEL
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF | Padding: 100px top/bottom
+
+  [Sub-Row] Single column, max-width 640px, centered
+
+  [Text] sp-eyebrow centered: "YOUR FREE ASSESSMENT"
+  [Headline] sp-heading-lg centered: "Let's Find Your Starting Point"
+  [Text] sp-body-text centered:
+    "Answer 5 quick questions. We'll tell you which program fits
+    your goals -- and invite you to a free in-person evaluation."
+
+  [GHL Survey/Form Element]
+  Embed a GHL multi-step survey here. The survey should contain
+  these 5 questions:
+
+  Q1: What's your primary fitness goal?
+      Options: Weight loss / Build strength / Improve health
+      markers / Overall fitness
+
+  Q2: Have you tried other fitness programs before?
+      Options: Yes, multiple / Yes, one or two / No, this is my
+      first
+
+  Q3: How would you describe your current activity level?
+      Options: Sedentary / Lightly active / Moderately active
+
+  Q4: Do you have any health conditions we should know about?
+      Options (multi-select): Diabetes / High blood pressure /
+      High cholesterol / Joint issues / None
+
+  Q5: Which location is most convenient for you?
+      Options: Weymouth / Pembroke
+
+  After submission: Show personalized recommendation + prompt to
+  book a free in-person evaluation at their chosen location.
+
+  GHL SETUP NOTES:
+  - Create this as a GHL Survey (not a Form) for the multi-step
+    experience
+  - Style the survey within the GHL Survey Builder (remember:
+    forms render in iframes, so page CSS won't apply)
+  - Set the survey to match brand fonts (Manrope body, DM Serif
+    Display headings)
+  - Submit button should be orange (#E1641E) with pill radius
+  - After-submission redirect or message should recommend a
+    program and link to booking
+
+  -- OR if survey is not yet built, use this placeholder: --
+
+  [Custom Code]:
+
+  <div style="background:#fff;border:2px solid #E8E0D4;border-radius:20px;padding:5rem;text-align:center;" class="sp-animate">
+    <div style="font-size:2.5rem;margin-bottom:1rem;">&#128203;</div>
+    <h3 style="font-family:'DM Serif Display',serif;margin-bottom:0.5rem;">Quiz Funnel Embed</h3>
+    <p style="color:#7A7570;font-size:0.9rem;margin-bottom:1.5rem;">In GHL, this will be a multi-step survey/form with these 5 questions:</p>
+    <div style="text-align:left;max-width:400px;margin:0 auto;">
+      <div style="padding:0.6rem 0;border-bottom:1px solid #E8E0D4;font-size:0.88rem;"><strong>Q1:</strong> What's your primary fitness goal?<br><span style="color:#7A7570;font-size:0.78rem;">Weight loss / Build strength / Improve health markers / Overall fitness</span></div>
+      <div style="padding:0.6rem 0;border-bottom:1px solid #E8E0D4;font-size:0.88rem;"><strong>Q2:</strong> Have you tried other fitness programs before?<br><span style="color:#7A7570;font-size:0.78rem;">Yes, multiple / Yes, one or two / No, this is my first</span></div>
+      <div style="padding:0.6rem 0;border-bottom:1px solid #E8E0D4;font-size:0.88rem;"><strong>Q3:</strong> How would you describe your current activity level?<br><span style="color:#7A7570;font-size:0.78rem;">Sedentary / Lightly active / Moderately active</span></div>
+      <div style="padding:0.6rem 0;border-bottom:1px solid #E8E0D4;font-size:0.88rem;"><strong>Q4:</strong> Do you have any health conditions we should know about?<br><span style="color:#7A7570;font-size:0.78rem;">Diabetes / High blood pressure / High cholesterol / Joint issues / None</span></div>
+      <div style="padding:0.6rem 0;font-size:0.88rem;"><strong>Q5:</strong> Which location is most convenient for you?<br><span style="color:#7A7570;font-size:0.78rem;">Weymouth / Pembroke</span></div>
+    </div>
+    <div style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid #E8E0D4;">
+      <p style="color:#7A7570;font-size:0.78rem;font-style:italic;">After submission: personalized recommendation + prompt to book free in-person evaluation</p>
+    </div>
+  </div>
+
+  [Text] Custom Class: sp-microcopy, centered
+    "Takes under 2 minutes. No spam, no obligation."
+
+
+--------------------------------------
+SECTION G3: WHAT HAPPENS NEXT (TIMELINE)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #FFFFFF | Custom Class: sp-bg-white
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "AFTER THE QUIZ"
+    [Headline] sp-heading-lg: "What Happens Next"
+    [Text] sp-body-text centered:
+      "Here's exactly what to expect -- no surprises, no pressure."
+
+  [Custom Code] max-width 600px, margin: 0 auto
+  Custom Class: sp-timeline
+
+  <div class="sp-timeline" style="max-width:600px;margin:0 auto;">
+
+    <div class="sp-timeline-item" style="display:flex;gap:1.5rem;padding-bottom:3rem;position:relative;">
+      <div style="position:relative;">
+        <div class="sp-timeline-marker" style="width:56px;height:56px;border-radius:50%;background:#3D8B84;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.3rem;flex-shrink:0;position:relative;z-index:1;">1</div>
+        <div style="width:2px;background:#E8E0D4;position:absolute;left:27px;top:56px;bottom:0;"></div>
+      </div>
+      <div class="sp-timeline-content">
+        <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.25rem;">Get Your Personalized Recommendation</h4>
+        <p style="color:#7A7570;font-size:0.88rem;">Based on your answers, we'll suggest the program that fits your goals -- whether that's the 6-Week Challenge or a full membership.</p>
+      </div>
+    </div>
+
+    <div class="sp-timeline-item" style="display:flex;gap:1.5rem;padding-bottom:3rem;position:relative;">
+      <div style="position:relative;">
+        <div class="sp-timeline-marker" style="width:56px;height:56px;border-radius:50%;background:#3D8B84;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.3rem;flex-shrink:0;position:relative;z-index:1;">2</div>
+        <div style="width:2px;background:#E8E0D4;position:absolute;left:27px;top:56px;bottom:0;"></div>
+      </div>
+      <div class="sp-timeline-content">
+        <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.25rem;">Book Your Free In-Person Evaluation</h4>
+        <p style="color:#7A7570;font-size:0.88rem;">Meet your FitCoach at your preferred location. We'll measure body composition, blood pressure, and health history. 45 minutes, completely free.</p>
+      </div>
+    </div>
+
+    <div class="sp-timeline-item" style="display:flex;gap:1.5rem;padding-bottom:3rem;position:relative;">
+      <div style="position:relative;">
+        <div class="sp-timeline-marker" style="width:56px;height:56px;border-radius:50%;background:#3D8B84;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.3rem;flex-shrink:0;position:relative;z-index:1;">3</div>
+        <div style="width:2px;background:#E8E0D4;position:absolute;left:27px;top:56px;bottom:0;"></div>
+      </div>
+      <div class="sp-timeline-content">
+        <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.25rem;">Get Your Custom 5-Pillar Plan</h4>
+        <p style="color:#7A7570;font-size:0.88rem;">Your FitCoach builds a program tailored to your body, health, and life -- strength, cardio, nutrition, flexibility, and accountability.</p>
+      </div>
+    </div>
+
+    <div class="sp-timeline-item" style="display:flex;gap:1.5rem;padding-bottom:0;position:relative;">
+      <div style="position:relative;">
+        <div class="sp-timeline-marker" style="width:56px;height:56px;border-radius:50%;background:#3D8B84;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.3rem;flex-shrink:0;position:relative;z-index:1;">4</div>
+        <!-- No connector line on last item -->
+      </div>
+      <div class="sp-timeline-content">
+        <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.25rem;">Start Training (3x/week)</h4>
+        <p style="color:#7A7570;font-size:0.88rem;">Every session is supervised by your FitCoach. Weekly weigh-ins, monthly re-evaluations, and real-time adjustments as your body changes.</p>
+      </div>
+    </div>
+
+  </div>
+
+  GUARANTEE BADGE (below timeline):
+  [Custom Code] Custom Class: sp-guarantee sp-animate
+
+  <div class="sp-guarantee" style="display:flex;align-items:center;gap:1.5rem;background:#fff;border:2px solid #E8F4F2;border-radius:12px;padding:1.5rem;max-width:560px;margin:3rem auto 0;">
+    <div style="font-size:2.5rem;flex-shrink:0;">&#128737;&#65039;</div>
+    <div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.92rem;margin-bottom:0.2rem;">2-Week Unconditional Money-Back Guarantee</h4>
+      <p style="font-size:0.82rem;color:#7A7570;">We're so confident you'll love the program that we offer a full refund within the first two weeks -- no questions asked.</p>
+    </div>
+  </div>
+
+
+--------------------------------------
+SECTION G4: PREFER TO TALK? (FINAL CTA)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #3D8B84 | Custom Class: sp-bg-teal sp-final-cta
+  Padding: 120px top/bottom | Centered text
+
+  [Headline] sp-heading-lg style="color:#fff"
+    "Prefer to Talk to a Person?"
+
+  [Text] sp-body-text centered
+    style="color:rgba(255,255,255,0.8)"
+    "Skip the quiz and call us directly. A FitCoach will answer
+    your questions and book your free evaluation."
+
+  [Row] 3 Buttons side by side, centered, flex-wrap
+    [Button] "Call 888-FIT-2021"
+      Link: tel:8883482021
+      Custom Class: sp-btn-white sp-btn-lg
+
+    [Button] "Weymouth: 339-201-7906"
+      Link: tel:3392017906
+      Custom Class: sp-btn-outline-light
+
+    [Button] "Pembroke: 781-924-1872"
+      Link: tel:7819241872
+      Custom Class: sp-btn-outline-light
+
+
+================================================================
+8. LOCATIONS PAGE
+================================================================
+
+Section order: Dark Hero -> Location Cards -> Final CTA
+
+
+--------------------------------------
+SECTION L1: LOCATIONS HERO (DARK)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #1A2332 | Custom Class: sp-bg-navy
+  Padding: 160px top, 80px bottom | Centered text
+
+  [Text] sp-eyebrow style="color:rgba(255,255,255,0.5)"
+    "FIND YOUR LOCATION"
+
+  [Headline] sp-heading-xl style="color:#fff"
+    Content (use HTML mode):
+    2 Locations on the <em class="sp-italic-accent">South Shore</em>
+
+  [Text] sp-body-text centered, max-width 600px
+    style="color:rgba(255,255,255,0.6)"
+    "Both locations offer the full SetPointRx program with
+    certified FitCoaches and the same commitment to your success."
+
+
+--------------------------------------
+SECTION L2: LOCATION CARDS
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF | Padding: 100px top/bottom
+
+  [Sub-Row] 2 Columns (equal) | Custom Class: sp-locations-grid
+
+  Each column -- Custom Class: sp-location-card sp-animate
+
+  WEYMOUTH [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:3rem;border:1px solid #E8E0D4;">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:0.5rem;">Weymouth</h3>
+    <p style="color:#7A7570;font-size:0.9rem;margin-bottom:0.5rem;">122 Main Street<br>Weymouth, MA 02188</p>
+    <a href="tel:3392017906" style="color:#3D8B84;font-weight:600;font-size:0.85rem;display:block;margin-bottom:1rem;text-decoration:none;">339-201-7906</a>
+    <a href="/getting-started" class="sp-btn-teal sp-btn-sm" style="display:inline-block;padding:0.65rem 1.4rem;background:#3D8B84;color:#fff;border-radius:50px;font-weight:600;font-size:0.82rem;text-decoration:none;">Book at Weymouth &rarr;</a>
+  </div>
+
+  PEMBROKE [Custom Code]:
+  <div style="background:#fff;border-radius:12px;padding:3rem;border:1px solid #E8E0D4;">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:0.5rem;">Pembroke</h3>
+    <p style="color:#7A7570;font-size:0.9rem;margin-bottom:0.5rem;">125 Church Street<br>Pembroke, MA 02359</p>
+    <a href="tel:7819241872" style="color:#3D8B84;font-weight:600;font-size:0.85rem;display:block;margin-bottom:1rem;text-decoration:none;">781-924-1872</a>
+    <a href="/getting-started" class="sp-btn-teal sp-btn-sm" style="display:inline-block;padding:0.65rem 1.4rem;background:#3D8B84;color:#fff;border-radius:50px;font-weight:600;font-size:0.82rem;text-decoration:none;">Book at Pembroke &rarr;</a>
+  </div>
+
+  TIP: You can add Google Maps embeds above each card's content:
+  <iframe src="https://www.google.com/maps/embed?pb=YOUR_EMBED_URL"
+    width="100%" height="260"
+    style="border:0;border-radius:12px 12px 0 0;"
+    allowfullscreen="" loading="lazy"></iframe>
+
+
+--------------------------------------
+SECTION L3: FINAL CTA
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #3D8B84 | Custom Class: sp-bg-teal sp-final-cta
+  Padding: 120px top/bottom | Centered text
+
+  [Headline] sp-heading-lg style="color:#fff"
+    "Ready to Get Started?"
+
+  [Text] sp-body-text centered
+    style="color:rgba(255,255,255,0.8)"
+    "Take our free assessment and we'll recommend the right
+    program for your goals."
+
+  [Button] "Take Your Free Assessment ->"
+    Link: /getting-started
+    Custom Class: sp-btn-white sp-btn-lg
+
+  [Text] Custom Class: sp-microcopy
+    style="color:rgba(255,255,255,0.5)"
+    "Or call 888-FIT-2021 to speak with a FitCoach."
+
+
+================================================================
+9. 6-WEEK CHALLENGE PAGE
+================================================================
+
+Section order: Challenge Hero -> What's Included -> Challenge FAQ
+-> Final CTA
+
+
+--------------------------------------
+SECTION C1: CHALLENGE HERO (DARK)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #1A2332 | Custom Class: sp-bg-navy sp-challenge-hero
+  Padding: 160px top, 80px bottom | Centered text
+
+  [Text] sp-eyebrow style="color:rgba(255,255,255,0.5)"
+    "LIMITED AVAILABILITY"
+
+  [Headline] sp-heading-xl style="color:#fff"
+    Content (use HTML mode):
+    The 6-Week <em class="sp-italic-accent">SetPointRx</em> Challenge
+
+  [Text] sp-body-text centered, max-width 520px
+    style="color:rgba(255,255,255,0.6)"
+    "Experience the full program at a fraction of the cost. 6 weeks
+    of supervised training, nutrition coaching, and accountability."
+
+  [Custom Code] -- Price display:
+  <div style="text-align:center;">
+    <div class="sp-challenge-price" style="font-family:'DM Serif Display',serif;font-size:4rem;color:#E1641E;margin:1.5rem 0 0.5rem;">$99</div>
+    <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:3rem;">For the complete 6-week program &middot; Normally $XXX value</div>
+  </div>
+
+  [Button] "Claim Your Spot ->"
+    Custom Class: sp-btn-primary sp-btn-lg
+
+  [Text] Custom Class: sp-microcopy
+    style="color:rgba(255,255,255,0.4)"
+    "Limited spots available per location. 2-week money-back guarantee."
+
+  [Custom Code] -- Includes grid:
+  Custom Class: sp-challenge-includes
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:800px;margin:3rem auto 0;">
+    <div style="background:#243044;border-radius:12px;padding:1.5rem;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:0.5rem;">&#127947;</div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;color:#fff;margin-bottom:0.25rem;">18 Coached Sessions</h4>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.5);">3x/week for 6 weeks, every one supervised</p>
+    </div>
+    <div style="background:#243044;border-radius:12px;padding:1.5rem;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:0.5rem;">&#129367;</div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;color:#fff;margin-bottom:0.25rem;">Custom Nutrition Plan</h4>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.5);">Personalized meal plans and weekly check-ins</p>
+    </div>
+    <div style="background:#243044;border-radius:12px;padding:1.5rem;text-align:center;">
+      <div style="font-size:1.6rem;margin-bottom:0.5rem;">&#128202;</div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.88rem;color:#fff;margin-bottom:0.25rem;">Full Body Assessment</h4>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.5);">Before & after body composition analysis</p>
+    </div>
+  </div>
+
+  NOTE: On mobile (<768px), this grid should stack to 1 column.
+  The master CSS handles this via .sp-challenge-includes responsive
+  rules.
+
+
+--------------------------------------
+SECTION C2: WHAT'S INCLUDED (3 STEPS)
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #F7F4EF | Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "WHAT'S INCLUDED"
+    [Headline] sp-heading-lg:
+      "6 Weeks That Could Change Everything"
+    [Text] sp-body-text centered:
+      "This isn't a trial. It's the real program -- strength,
+      cardio, nutrition, flexibility, and accountability -- at an
+      introductory price."
+
+  [Sub-Row] 3 Columns (equal) | Custom Class: sp-steps-grid
+
+  STEP 1 [Custom Code] Custom Class: sp-step-card sp-animate:
+  <div style="text-align:center;">
+    <div style="width:72px;height:72px;border-radius:50%;background:#E1641E;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.6rem;margin:0 auto 1.5rem;box-shadow:0 4px 16px rgba(225,100,30,0.3);">1</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Week 1: Foundation</h4>
+    <p style="color:#7A7570;font-size:0.88rem;max-width:300px;margin:0 auto;">Body composition analysis, health screening, movement assessment. Your FitCoach builds your personalized plan.</p>
+  </div>
+
+  STEP 2 [Custom Code] Custom Class: sp-step-card sp-animate:
+  <div style="text-align:center;">
+    <div style="width:72px;height:72px;border-radius:50%;background:#E1641E;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.6rem;margin:0 auto 1.5rem;box-shadow:0 4px 16px rgba(225,100,30,0.3);">2</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Weeks 2-5: Transform</h4>
+    <p style="color:#7A7570;font-size:0.88rem;max-width:300px;margin:0 auto;">3 coached sessions per week. Weekly weigh-ins and nutrition adjustments. Progressive challenge as you get stronger.</p>
+  </div>
+
+  STEP 3 [Custom Code] Custom Class: sp-step-card sp-animate:
+  <div style="text-align:center;">
+    <div style="width:72px;height:72px;border-radius:50%;background:#E1641E;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.6rem;margin:0 auto 1.5rem;box-shadow:0 4px 16px rgba(225,100,30,0.3);">3</div>
+    <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Week 6: Results</h4>
+    <p style="color:#7A7570;font-size:0.88rem;max-width:300px;margin:0 auto;">Full re-evaluation. See the numbers. Decide your next step with zero pressure.</p>
+  </div>
+
+
+--------------------------------------
+SECTION C3: CHALLENGE FAQ
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #FFFFFF | Custom Class: sp-bg-white
+  Padding: 100px top/bottom
+
+  [Sub-Row] Section header (centered)
+    [Text] sp-eyebrow: "FREQUENTLY ASKED"
+    [Headline] sp-heading-lg: "Challenge Questions"
+
+  [Custom Code] max-width 720px, margin: 0 auto
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      What happens after the 6 weeks?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">Your FitCoach will review your results and discuss membership options to continue. There's absolutely no obligation -- the 6-week challenge is a complete program on its own.</p>
+    </div>
+  </div>
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      Is $99 really the full price?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">Yes. $99 covers all 18 coached sessions, your nutrition plan, and your full body composition assessment. No hidden fees, no automatic renewals.</p>
+    </div>
+  </div>
+
+  <div class="sp-faq-item" style="border-bottom:1px solid #E8E0D4;">
+    <button class="sp-faq-question" style="width:100%;background:none;border:none;text-align:left;padding:1.5rem 0;font-size:1rem;font-weight:600;color:#2A2A2A;display:flex;justify-content:space-between;align-items:center;gap:1rem;cursor:pointer;">
+      How many spots are available?
+    </button>
+    <div class="sp-faq-answer" style="max-height:0;overflow:hidden;transition:max-height 0.4s ease;">
+      <p style="color:#7A7570;font-size:0.9rem;line-height:1.7;padding-bottom:1.5rem;">Each location accepts a limited number of challenge participants to ensure every member gets adequate FitCoach attention. Contact your preferred location for current availability.</p>
+    </div>
+  </div>
+
+
+--------------------------------------
+SECTION C4: FINAL CTA
+--------------------------------------
+
+GHL STRUCTURE:
+[Row] Background: #3D8B84 | Custom Class: sp-bg-teal sp-final-cta
+  Padding: 120px top/bottom | Centered text
+
+  [Headline] sp-heading-lg style="color:#fff"
+    "$99. 6 Weeks. Zero Risk."
+
+  [Text] sp-body-text centered
+    style="color:rgba(255,255,255,0.8)"
+    "2-week money-back guarantee. If it's not for you, you get
+    every penny back."
+
+  [Button] "Claim Your Spot ->"
+    Custom Class: sp-btn-white sp-btn-lg
+
+  [Text] Custom Class: sp-microcopy
+    style="color:rgba(255,255,255,0.5)"
+    "Or call 888-FIT-2021 to reserve by phone."
+
+
+================================================================
+10. FOOTER (shared across all pages)
+================================================================
+
+GHL STRUCTURE:
+[Row] Background: #1A2332 | Padding: 80px top, 48px bottom
+
+  [Sub-Row] 4 Columns (2fr / 1fr / 1fr / 1fr)
+  All text color: rgba(255,255,255,0.5)
+  Link hover color: #FFFFFF
+
+  COL 1: Brand
+    [Custom Code]:
+
+    <div>
+      <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;color:#fff;margin-bottom:1rem;">SetPoint<span style="color:#3D8B84;font-style:italic;">Rx</span>&#8482;</div>
+      <p style="font-size:0.82rem;line-height:1.7;max-width:280px;color:rgba(255,255,255,0.5);">The science of lasting weight loss. Supervised fitness and nutrition programs designed to reset your body's natural set point. Serving the South Shore of Massachusetts since 2010.</p>
+    </div>
+
+  COL 2: Program Links
+    [Custom Code]:
+
+    <div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1rem;">Program</h4>
+      <a href="/our-program" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">Our Program</a>
+      <a href="/results" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">Results</a>
+      <a href="/6-week-challenge" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">6-Week Challenge</a>
+      <a href="/getting-started" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">Getting Started</a>
+    </div>
+
+  COL 3: Locations (Weymouth + Pembroke ONLY)
+    [Custom Code]:
+
+    <div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1rem;">Locations</h4>
+      <a href="/locations" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">Weymouth</a>
+      <a href="/locations" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">Pembroke</a>
+    </div>
+
+  COL 4: Contact
+    [Custom Code]:
+
+    <div>
+      <h4 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1rem;">Contact</h4>
+      <a href="tel:8883482021" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">888-FIT-2021</a>
+      <a href="#" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">Facebook</a>
+      <a href="#" style="display:block;font-size:0.85rem;color:rgba(255,255,255,0.6);padding:0.25rem 0;text-decoration:none;">Instagram</a>
+    </div>
+
+  [Divider] 1px solid rgba(255,255,255,0.08)
+  Margin-top: 48px
+
+  [Sub-Row] 2 Columns (bottom bar)
+    Left [Text]:
+    style="font-size:0.75rem;color:rgba(255,255,255,0.5)"
+      "(c) 2025 SetPointRx(TM). All rights reserved."
+
+    Right [Custom Code]:
+    <div style="font-size:0.75rem;">
+      <a href="#" style="color:rgba(255,255,255,0.4);margin-left:1rem;text-decoration:none;">Privacy Policy</a>
+      <a href="#" style="color:rgba(255,255,255,0.4);margin-left:1rem;text-decoration:none;">Terms of Service</a>
+    </div>
+
+TIP: In GHL, save this as an "Element Template" / global section
+so it appears on every page automatically.
+
+
+================================================================
+11. MOBILE STICKY CTA BAR
+================================================================
+
+V2 CHANGE: The CTA text is now "Take Your Free Assessment"
+(not "Book Free Evaluation"). It drives to the quiz page.
+
+Add this to every page's footer Custom Code:
+
+<div class="sp-mobile-cta-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;padding:1rem 1.5rem;box-shadow:0 -2px 16px rgba(42,42,42,0.1);z-index:998;text-align:center;">
+  <a href="/getting-started"
+     class="sp-btn-primary"
+     style="display:block;text-align:center;padding:0.85rem 1.5rem;text-decoration:none;border-radius:50px;background:#E1641E;color:#fff;font-weight:600;font-size:0.9rem;">
+    Take Your Free Assessment
+  </a>
+</div>
+
+This only shows on mobile (< 768px) via the master CSS:
+  @media (max-width: 768px) { .sp-mobile-cta-bar { display: block; } }
+
+Also add body bottom padding on mobile to prevent the sticky bar
+from covering page content:
+  @media (max-width: 768px) { body { padding-bottom: 72px; } }
+
+
+================================================================
+12. CUSTOM CLASS CHEAT SHEET
+================================================================
+
+TYPOGRAPHY:
+  sp-font-display          -> DM Serif Display
+  sp-font-body             -> Manrope
+  sp-heading-xl            -> Hero headlines (clamp 2.4rem - 3.8rem)
+  sp-heading-lg            -> Section headlines (clamp 1.9rem - 2.8rem)
+  sp-heading-md            -> Sub-headlines (clamp 1.3rem - 1.7rem)
+  sp-heading-sm            -> Card titles (1.15rem)
+  sp-eyebrow               -> Section labels (teal, uppercase, 0.72rem)
+  sp-body-text             -> Body paragraphs (muted)
+  sp-body-large            -> Larger body text (1.05rem)
+  sp-italic-accent         -> Italic teal text (for emphasis in headings)
+  sp-microcopy             -> Small italic muted text (0.78rem)
+
+BUTTONS:
+  sp-btn-primary           -> Orange filled (#E1641E, main CTA)
+  sp-btn-secondary         -> Charcoal outlined (sand border)
+  sp-btn-teal              -> Teal filled (#3D8B84)
+  sp-btn-white             -> White filled (for dark/teal BGs)
+  sp-btn-outline-light     -> White outlined (for dark BGs)
+  sp-btn-sm                -> Small button (0.65rem 1.4rem padding)
+  sp-btn-lg                -> Large button (1.1rem 2.4rem padding)
+  sp-btn-full              -> Full-width button
+
+BACKGROUNDS:
+  sp-bg-cream              -> #F7F4EF
+  sp-bg-white              -> #FFFFFF
+  sp-bg-navy               -> #1A2332 (auto white text)
+  sp-bg-teal               -> #3D8B84 (auto white text)
+  sp-bg-orange-gradient    -> Orange gradient (for challenge sections)
+  sp-glow-teal             -> Adds radial teal glow overlay
+
+CARDS:
+  sp-card                  -> White card with hover lift + shadow
+  sp-who-card              -> "Who This Is For" persona card
+  sp-pillar-card           -> 5 Pillars card
+  sp-result-card           -> Transformation result card
+  sp-testimonial-card      -> Quote testimonial card
+  sp-location-card         -> Location card
+  sp-guarantee             -> Guarantee badge (teal border)
+
+TRUST BAR:
+  sp-trust-bar             -> Trust bar container (navy)
+  sp-trust-item            -> Individual trust stat
+  sp-trust-num             -> Large number in trust bar
+  sp-trust-label           -> Small label in trust bar
+  sp-trust-divider         -> Vertical divider between items
+
+SCIENCE:
+  sp-science-grid          -> 2-column science layout
+  sp-science-visual        -> Navy visual/diagram panel
+  sp-science-diagram       -> Diagram content inside visual
+  sp-science-stat          -> Stat row inside visual
+
+STEPS (HOW IT WORKS):
+  sp-step-card             -> Step card container
+  sp-step-num              -> Numbered circle (teal by default)
+  sp-steps-grid            -> 3-column step grid with connector
+
+COACH:
+  sp-coach-grid            -> 2-column coach layout
+  sp-coach-features        -> Checkmark feature list (ul)
+
+TIMELINE:
+  sp-timeline              -> Timeline container (max-width 600px)
+  sp-timeline-item         -> Individual timeline step
+  sp-timeline-marker       -> Numbered circle marker
+  sp-timeline-content      -> Text content next to marker
+
+CHALLENGE:
+  sp-challenge-hero        -> Challenge page hero section
+  sp-challenge-price       -> Large price display ($99)
+  sp-challenge-includes    -> 3-column includes grid
+
+FAQ:
+  sp-faq-item              -> FAQ accordion item
+  sp-faq-question          -> Clickable question (button)
+  sp-faq-answer            -> Collapsible answer content
+
+ANIMATION:
+  sp-animate               -> Fade-in on scroll (via JS observer)
+
+STATS:
+  sp-stat-number           -> Large stat display (DM Serif Display)
+  sp-stat-desc             -> Stat label/description
+  sp-stat-counter          -> Animated counter (use with JS)
+    data-count="25000"     -> Target number
+    data-suffix="+"        -> Suffix after number
+    data-prefix="$"        -> Prefix before number
+
+MISC:
+  sp-icon-box              -> Square icon container
+  sp-icon-circle           -> Round icon container
+  sp-floating-badge        -> Floating overlay badge (hero image)
+  sp-mobile-cta-bar        -> Mobile sticky CTA bar (bottom fixed)
+  sp-final-cta             -> Final CTA section styling
+
+
+================================================================
+V1 -> V2 MIGRATION QUICK REFERENCE
+================================================================
+
+These are the key changes from V1 to V2 for anyone who built the
+V1 version and needs to update:
+
+1. LOCATIONS: Remove Holbrook and Plymouth. Only Weymouth and
+   Pembroke remain. Update all location cards, footer, testimonials.
+
+2. PRIMARY CTA: "Book Your Free Evaluation" -> "Take Your Free
+   Assessment". All CTAs now drive to /getting-started quiz page
+   instead of Calendly booking links.
+
+3. HOMEPAGE HERO: "Get With The Plan" -> "Your Body Has a Set
+   Point. We Reset It." Eyebrow changed. Secondary CTA is now
+   "See the Science" (anchor scroll).
+
+4. HOMEPAGE SECTIONS REORDERED:
+   V1: Hero > Empathy > Pillars > Transformation > Stats > Coach
+       > Challenge Banner > Locations > Final CTA
+   V2: Hero > Trust Bar > Who This Is For > Science > How It Works
+       > 5 Pillars > Results > Coach > Locations > FAQ > Final CTA
+
+5. NEW SECTIONS ADDED: Trust Bar, Science section, How It Works
+   (3-step), FAQ (on homepage).
+
+6. SECTIONS REMOVED FROM HOMEPAGE: Empathy/"Sound Familiar"
+   (replaced by "Who This Is For"), Stats Bar (folded into Trust
+   Bar), 6-Week Challenge Banner (still has dedicated page).
+
+7. FINAL CTA BACKGROUND: Navy (#1A2332) -> Teal (#3D8B84).
+
+8. GETTING STARTED PAGE: Complete redesign. Now quiz-funnel-first
+   with embedded GHL survey. Removed pricing cards. Added timeline
+   "What Happens Next" section and "Prefer to Talk?" final CTA.
+
+9. RESULTS PAGE: Hero now dark (#1A2332). 6 transformation cards
+   in 3x2 grid. Added 2x2 testimonial quote grid.
+
+10. MOBILE STICKY CTA: "Book Free Evaluation" -> "Take Your Free
+    Assessment". Link target -> /getting-started.
+
+11. HEADER CTA: "Book Free Evaluation" -> "Take the Quiz". Link
+    target -> /getting-started.
+
+12. FOOTER: Now uses navy (#1A2332) background. 4 columns: Brand,
+    Program, Locations (Weymouth + Pembroke only), Contact.
