@@ -22,25 +22,20 @@
 
 /* ── 1. Scroll reveal animation — cascading stagger ────────────── */
 setInterval(function () {
-  var pending = document.querySelectorAll('.sp-animate:not(.sp-done)');
+  var pending = document.querySelectorAll('.sp-animate:not(.sp-done):not(.sp-queued)');
   var batch = [];
 
   pending.forEach(function (el) {
     var rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight && rect.top > -rect.height) {
       batch.push(el);
-    } else if (!el.classList.contains('sp-done')) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
     }
   });
 
   batch.forEach(function (el, i) {
-    el.classList.add('sp-done');
+    el.classList.add('sp-queued');
     setTimeout(function () {
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
+      el.classList.add('sp-done');
     }, i * 150);
   });
 }, 200);
