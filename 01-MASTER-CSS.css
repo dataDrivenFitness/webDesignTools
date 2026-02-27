@@ -59,6 +59,35 @@ body,
 /* Reset GHL default link colors */
 a { text-decoration: none; }
 
+/* Kill GHL default borders on columns and elements */
+.hl_page-creator--v2 .row-align,
+.hl_page-creator--v2 .col_inner,
+.hl_page-creator--v2 .inner-column,
+.hl_page-creator--v2 [class*="col-"] {
+  border: none !important;
+}
+
+/* Force font family on all GHL text elements */
+.hl_page-creator--v2 h1,
+.hl_page-creator--v2 h2,
+.hl_page-creator--v2 h3,
+.hl_page-creator--v2 h4 {
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+}
+
+.hl_page-creator--v2 p,
+.hl_page-creator--v2 span,
+.hl_page-creator--v2 li,
+.hl_page-creator--v2 label {
+  font-family: var(--font-body) !important;
+}
+
+/* Remove GHL default padding/margin on text elements */
+.hl_page-creator--v2 .hl_text-element p {
+  margin: 0 !important;
+}
+
 
 /* ========================================
    TYPOGRAPHY CLASSES
