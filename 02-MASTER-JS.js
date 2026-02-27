@@ -3,150 +3,83 @@
    ================================================================
    WHERE TO PUT THIS:
    Page Settings > Tracking Code > Footer Tracking
-   Link via CDN or paste inline wrapped in <script> tags
-   ================================================================
-   GHL uses Nuxt.js which renders content dynamically.
+   Paste inline wrapped in <script> tags
 
-   ANIMATION TRIGGER OPTIONS:
-   1. data-animate attribute (for Custom Code elements)
-   2. sp-animate class (for native GHL elements via Custom Class field)
+   ANIMATION: Add class "sp-animate" to any element's Custom Class
+   field in GHL to trigger fade-in-on-scroll animation.
 
-   Both work identically. Use whichever fits the element type.
+   GHL runs on Nuxt.js which breaks traditional event listeners
+   and IntersectionObserver. All features use setInterval polling
+   which is the only reliable pattern in GHL's environment.
    ================================================================ */
 
-(function() {
-  var attempts = 0;
-
-  function waitForGHL() {
-    var hasContent = document.querySelector('[data-animate]') ||
-                     document.querySelector('.sp-animate') ||
-                     document.querySelector('.sp-faq-question') ||
-                     document.querySelector('.sp-stat-counter') ||
-                     document.querySelector('[class*="sp-"]');
-    if (!hasContent && attempts < 20) {
-      attempts++;
-      setTimeout(waitForGHL, 500);
-      return;
+/* Scroll reveal animation */
+setInterval(function() {
+  document.querySelectorAll('.sp-animate:not(.sp-done)').forEach(function(el) {
+    var rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.top > -rect.height) {
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      el.classList.add('sp-done');
+    } else if (!el.classList.contains('sp-done')) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
     }
-    initReveals();
-    initFaq();
-    initHeaderShadow();
-    initCounters();
-    initSmoothScroll();
-  }
+  });
+}, 200);
 
-  /* ========================================
-     SCROLL REVEAL ANIMATION
-     Supports both [data-animate] and .sp-animate
-     JS adds sp-reveal class + observes in same pass
-     so there is no gap where content is hidden but unwatched.
-     ======================================== */
-  function initReveals() {
-    var items = document.querySelectorAll('[data-animate], .sp-animate');
-    if (items.length === 0) return;
+/* FAQ accordion */
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.sp-faq-question');
+  if (!btn) return;
+  var item = btn.closest('.sp-faq-item');
+  document.querySelectorAll('.sp-faq-item.open').forEach(function(openItem) {
+    if (openItem !== item) openItem.classList.remove('open');
+  });
+  item.classList.toggle('open');
+});
 
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('sp-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -40px 0px'
-    });
+/* Header scroll shadow */
+setInterval(function() {
+  try {
+    var header = document.querySelector('.hl_header');
+    if (header) header.style.boxShadow = document.documentElement.scrollTop > 50 ? '0 2px 8px rgba(42,42,42,0.06)' : 'none';
+  } catch(e) {}
+}, 200);
 
-    items.forEach(function(el) {
-      el.classList.add('sp-reveal');
-      observer.observe(el);
-    });
-  }
-
-  /* ========================================
-     FAQ ACCORDION
-     ======================================== */
-  function initFaq() {
-    document.querySelectorAll('.sp-faq-question').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var item = this.closest('.sp-faq-item');
-        document.querySelectorAll('.sp-faq-item.open').forEach(function(openItem) {
-          if (openItem !== item) openItem.classList.remove('open');
-        });
-        item.classList.toggle('open');
-      });
-    });
-  }
-
-  /* ========================================
-     HEADER SCROLL SHADOW
-     ======================================== */
-  function initHeaderShadow() {
-    var header = document.querySelector('.hl_header') ||
-                 document.querySelector('.hl_navbar') ||
-                 document.querySelector('[class*="header"]');
-    if (header) {
-      window.addEventListener('scroll', function() {
-        header.style.boxShadow = window.scrollY > 50 ? '0 2px 8px rgba(42,42,42,0.06)' : 'none';
-      });
+/* Stat counter animation */
+setInterval(function() {
+  document.querySelectorAll('.sp-stat-counter:not(.sp-counted)').forEach(function(el) {
+    var rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.top > 0) {
+      el.classList.add('sp-counted');
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      var prefix = el.getAttribute('data-prefix') || '';
+      var startTime = null;
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / 2000, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = prefix + Math.floor(eased * target).toLocaleString() + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = prefix + target.toLocaleString() + suffix;
+      }
+      requestAnimationFrame(step);
     }
+  });
+}, 200);
+
+/* Smooth scroll for anchor links */
+document.addEventListener('click', function(e) {
+  var anchor = e.target.closest('a[href^="#"]');
+  if (!anchor) return;
+  var targetId = anchor.getAttribute('href');
+  if (targetId === '#') return;
+  var target = document.querySelector(targetId);
+  if (target) {
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-
-  /* ========================================
-     STAT COUNTER ANIMATION
-     ======================================== */
-  function initCounters() {
-    var counters = document.querySelectorAll('.sp-stat-counter');
-    if (counters.length === 0) return;
-
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          var el = entry.target;
-          var target = parseInt(el.getAttribute('data-count'), 10);
-          var suffix = el.getAttribute('data-suffix') || '';
-          var prefix = el.getAttribute('data-prefix') || '';
-          var startTime = null;
-
-          function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            var progress = Math.min((timestamp - startTime) / 2000, 1);
-            var eased = 1 - Math.pow(1 - progress, 3);
-            el.textContent = prefix + Math.floor(eased * target).toLocaleString() + suffix;
-            if (progress < 1) requestAnimationFrame(step);
-            else el.textContent = prefix + target.toLocaleString() + suffix;
-          }
-          requestAnimationFrame(step);
-          observer.unobserve(el);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    counters.forEach(function(el) { observer.observe(el); });
-  }
-
-  /* ========================================
-     SMOOTH SCROLL FOR ANCHOR LINKS
-     ======================================== */
-  function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-      anchor.addEventListener('click', function(e) {
-        var targetId = this.getAttribute('href');
-        if (targetId === '#') return;
-        var target = document.querySelector(targetId);
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-  }
-
-  /* ========================================
-     INIT — Execute immediately with tiny delay
-     GHL's load event fires before external scripts,
-     so we skip event listeners entirely.
-     ======================================== */
-  setTimeout(waitForGHL, 100);
-
-})();
+});
