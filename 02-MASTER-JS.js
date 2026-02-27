@@ -142,6 +142,11 @@
     });
   }
 
-  if (document.readyState === 'complete') waitForGHL();
-  else window.addEventListener('load', waitForGHL);
+  /* ========================================
+     INIT — Execute immediately with tiny delay
+     GHL's load event fires before external scripts,
+     so we skip event listeners entirely.
+     ======================================== */
+  setTimeout(waitForGHL, 100);
+
 })();
